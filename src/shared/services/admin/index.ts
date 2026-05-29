@@ -13,4 +13,22 @@ export * from "./notificationManagement.service";
 export * from "./supportTicket.service";
 export * from "./reportsAnalytics.service";
 export * from "./userManagement.service";
-export * from "./captainManagement.service";
+export {
+  listCaptains,
+  getCaptainStats,
+  getCaptainDetail,
+  updateCaptainInfo,
+  updateCaptainDocuments,
+  approveCaptain,
+  rejectCaptain,
+  suspendCaptain,
+  reactivateCaptain,
+  getCaptainWallet,
+  getCaptainTransactions,
+  getCaptainWalletAnalytics,
+  getCaptainLiveOrders,
+  getCaptainHistory,
+  listCaptainSettlements,
+  approveCaptainSettlement,
+  rejectCaptainSettlement,
+} from "./captainManagement.service";

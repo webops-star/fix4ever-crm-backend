@@ -10,6 +10,7 @@
  * The delivery window for each run is [now - delayHours - 1h, now - delayHours],
  * matching the 1-hour cron interval so no events are missed or double-processed.
  */
+import mongoose from "mongoose";
 import { FollowUpRule } from "../shared/models/followUpRule.model";
 import { FollowUpLog } from "../shared/models/followUpLog.model";
 import { ServiceRequest } from "../shared/models/serviceRequest/serviceRequest.model";
@@ -25,7 +26,7 @@ const BATCH_SIZE = 1000;
 // ─── Core rule processor (also exported for manual "Run Now" endpoint) ────────
 
 export async function runRule(rule: {
-  _id: unknown;
+  _id: mongoose.Types.ObjectId | string;
   trigger: string;
   delayHours: number;
   daysBeforeExpiry?: number;
@@ -261,7 +262,7 @@ export async function runRule(rule: {
 // ─── Scheduler ────────────────────────────────────────────────────────────────
 
 async function runAllRules() {
-  let rules: Awaited<ReturnType<typeof FollowUpRule.find>>;
+  let rules;
   try {
     rules = await FollowUpRule.find({ isActive: true }).lean();
   } catch (err: unknown) {

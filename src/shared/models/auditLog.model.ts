@@ -47,7 +47,8 @@ export type AuditAction =
   | "CREATE_TEMPLATE"
   | "UPDATE_TEMPLATE"
   | "DELETE_TEMPLATE"
-  | "TAG";
+  | "TAG"
+  | "UPDATE_SR";
 
 export interface IAuditLog {
   action: AuditAction;
@@ -117,6 +118,7 @@ const auditLogSchema = new Schema<IAuditLogDocument>(
         "CANCEL_SR",
         "ESCALATE_SR",
         "TAG_SR",
+        "UPDATE_SR",
         "SUBSCRIPTION_CANCEL",
         "SUBSCRIPTION_PAUSE",
         "SUBSCRIPTION_REACTIVATE",

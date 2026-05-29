@@ -597,13 +597,13 @@ export async function crmGetSegmentOverview() {
     walletActiveIds,
   ] = await Promise.all([
     User.countDocuments({ role: "user" }),
-    UserSubscription.distinct("userId", { status: "active" }),
+    UserSubscription.distinct("userId", { status: "active" }) as unknown as mongoose.Types.ObjectId[],
     User.countDocuments({ role: "user", isActive: false }),
     User.countDocuments({ role: "user", createdAt: { $gte: monthStart } }),
-    UserSubscription.distinct("userId", { status: "trial" }),
-    UserSubscription.distinct("userId", { status: "expired" }),
-    UserSubscription.distinct("userId", { status: "cancelled" }),
-    UserSubscription.distinct("userId", { status: { $in: ["active", "trial"] } }),
+    UserSubscription.distinct("userId", { status: "trial" }) as unknown as mongoose.Types.ObjectId[],
+    UserSubscription.distinct("userId", { status: "expired" }) as unknown as mongoose.Types.ObjectId[],
+    UserSubscription.distinct("userId", { status: "cancelled" }) as unknown as mongoose.Types.ObjectId[],
+    UserSubscription.distinct("userId", { status: { $in: ["active", "trial"] } }) as unknown as mongoose.Types.ObjectId[],
     mongoose.model("ServiceRequest").aggregate([
       { $match: { status: "Completed" } },
       { $group: { _id: "$customerId", totalSpent: { $sum: "$adminFinalPrice" } } },
@@ -621,13 +621,13 @@ export async function crmGetSegmentOverview() {
     ]),
     mongoose
       .model("ServiceRequest")
-      .distinct("customerId", { createdAt: { $gte: since30 } }),
+      .distinct("customerId", { createdAt: { $gte: since30 } }) as unknown as mongoose.Types.ObjectId[],
     mongoose.model("ServiceRequest").aggregate([
       { $sort: { createdAt: -1 } },
       { $group: { _id: "$customerId", lastSR: { $first: "$createdAt" } } },
       { $match: { lastSR: { $gte: atRiskFrom, $lte: atRiskTo } } },
     ]),
-    CustomerWallet.distinct("userId", { balance: { $gt: 0 }, isActive: true }),
+    CustomerWallet.distinct("userId", { balance: { $gt: 0 }, isActive: true }) as unknown as mongoose.Types.ObjectId[],
   ]);
 
   // Count users for id-list segments
@@ -644,17 +644,17 @@ export async function crmGetSegmentOverview() {
     atRisk,
     walletActive,
   ] = await Promise.all([
-    User.countDocuments({ role: "user", _id: { $in: activeSubscriberIds } }),
-    User.countDocuments({ role: "user", _id: { $in: trialIds } }),
-    User.countDocuments({ role: "user", _id: { $in: expiredIds } }),
-    User.countDocuments({ role: "user", _id: { $in: cancelledIds } }),
-    User.countDocuments({ role: "user", _id: { $nin: noSubIds } }),
-    User.countDocuments({ role: "user", _id: { $in: highValueRows.map((r: { _id: unknown }) => r._id) } }),
-    User.countDocuments({ role: "user", _id: { $in: returningRows.map((r: { _id: unknown }) => r._id) } }),
-    User.countDocuments({ role: "user", _id: { $in: highUsageRows.map((r: { _id: unknown }) => r._id) } }),
-    User.countDocuments({ role: "user", _id: { $in: recentActiveIds } }),
-    User.countDocuments({ role: "user", _id: { $in: atRiskRows.map((r: { _id: unknown }) => r._id) } }),
-    User.countDocuments({ role: "user", _id: { $in: walletActiveIds } }),
+    User.countDocuments({ role: "user", _id: { $in: activeSubscriberIds as mongoose.Types.ObjectId[] } }),
+    User.countDocuments({ role: "user", _id: { $in: trialIds as mongoose.Types.ObjectId[] } }),
+    User.countDocuments({ role: "user", _id: { $in: expiredIds as mongoose.Types.ObjectId[] } }),
+    User.countDocuments({ role: "user", _id: { $in: cancelledIds as mongoose.Types.ObjectId[] } }),
+    User.countDocuments({ role: "user", _id: { $nin: noSubIds as mongoose.Types.ObjectId[] } }),
+    User.countDocuments({ role: "user", _id: { $in: highValueRows.map((r: { _id: mongoose.Types.ObjectId }) => r._id) } }),
+    User.countDocuments({ role: "user", _id: { $in: returningRows.map((r: { _id: mongoose.Types.ObjectId }) => r._id) } }),
+    User.countDocuments({ role: "user", _id: { $in: highUsageRows.map((r: { _id: mongoose.Types.ObjectId }) => r._id) } }),
+    User.countDocuments({ role: "user", _id: { $in: recentActiveIds as mongoose.Types.ObjectId[] } }),
+    User.countDocuments({ role: "user", _id: { $in: atRiskRows.map((r: { _id: mongoose.Types.ObjectId }) => r._id) } }),
+    User.countDocuments({ role: "user", _id: { $in: walletActiveIds as mongoose.Types.ObjectId[] } }),
   ]);
 
   return {
@@ -2205,7 +2205,7 @@ export async function crmUpdateFollowUpRule(
     daysBeforeExpiry: number;
     channel: string;
     targetCities: string[];
-    content: { subject?: string; body: string; callToAction?: string };
+    content?: { subject?: string; body?: string; callToAction?: string };
     isActive: boolean;
   }>,
   updatedBy: string,

@@ -16,8 +16,8 @@ import {
   getCaptainLiveOrders,
   getCaptainHistory,
   listCaptainSettlements,
-  approveSettlement,
-  rejectSettlement,
+  approveCaptainSettlement,
+  rejectCaptainSettlement,
 } from "../../shared/services/admin";
 import {
   successResponse,
@@ -300,7 +300,7 @@ export async function approveSettlementController(
   req: FastifyRequest<SettlementParams>,
   reply: FastifyReply,
 ) {
-  const settlement = await approveSettlement(
+  const settlement = await approveCaptainSettlement(
     req.admin!.userId,
     req.params.settlementId,
   );
@@ -316,7 +316,7 @@ export async function rejectSettlementController(
   reply: FastifyReply,
 ) {
   const { reason } = z.object({ reason: z.string().min(3) }).parse(req.body);
-  const settlement = await rejectSettlement(
+  const settlement = await rejectCaptainSettlement(
     req.admin!.userId,
     req.params.settlementId,
     reason,

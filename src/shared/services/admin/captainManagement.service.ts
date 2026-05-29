@@ -290,12 +290,15 @@ export async function getCaptainWallet(captainId: string) {
   if (!mongoose.Types.ObjectId.isValid(captainId))
     throw ApiError.badRequest("Invalid captain ID");
 
-  const wallet = await CaptainWallet().findOne({ captainId }).lean();
+  const wallet =
+    (await CaptainWallet()
+      .findOne({ captainId })
+      .lean()) as
+      | { balance: number; pendingSettlement: number }
+      | null;
   if (!wallet) throw ApiError.notFound("Wallet not found");
 
-  const availableBalance =
-    (wallet as Record<string, number>).balance -
-    (wallet as Record<string, number>).pendingSettlement;
+  const availableBalance = wallet.balance - wallet.pendingSettlement;
 
   return { ...wallet, availableBalance };
 }
@@ -504,7 +507,7 @@ export async function listCaptainSettlements(filter: SettlementFilter) {
   return { settlements, total, page, limit };
 }
 
-export async function approveSettlement(adminId: string, settlementId: string) {
+export async function approveCaptainSettlement(adminId: string, settlementId: string) {
   if (!mongoose.Types.ObjectId.isValid(settlementId))
     throw ApiError.badRequest("Invalid settlement ID");
 
@@ -523,7 +526,7 @@ export async function approveSettlement(adminId: string, settlementId: string) {
   return settlement;
 }
 
-export async function rejectSettlement(
+export async function rejectCaptainSettlement(
   adminId: string,
   settlementId: string,
   reason: string,
