@@ -36,7 +36,7 @@ export interface IServiceRequestDocument extends Omit<Document, "model"> {
 
 const serviceRequestSchema = new Schema<IServiceRequestDocument>(
   {
-    request_id: { type: String, sparse: true },
+    request_id: { type: String, sparse: true, index: true },
     customerId: { type: Schema.Types.ObjectId, ref: "User" },
     userName: { type: String },
     userPhone: { type: String },
@@ -62,7 +62,6 @@ const serviceRequestSchema = new Schema<IServiceRequestDocument>(
   },
 );
 
-serviceRequestSchema.index({ request_id: 1 });
 serviceRequestSchema.index({ customerId: 1 });
 serviceRequestSchema.index({ status: 1 });
 serviceRequestSchema.index({ city: 1 });

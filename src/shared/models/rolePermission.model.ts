@@ -17,8 +17,6 @@ const rolePermissionSchema = new Schema<IRolePermissionDocument>(
   { timestamps: true, collection: "rolepermissons" }, // matches existing DB collection name (single 's')
 );
 
-rolePermissionSchema.index({ role: 1 }, { unique: true });
-
 export const RolePermission = mongoose.model<IRolePermissionDocument>(
   "RolePermission",
   rolePermissionSchema,
