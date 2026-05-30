@@ -36,7 +36,7 @@ export interface IServiceRequestDocument extends Omit<Document, "model"> {
 
 const serviceRequestSchema = new Schema<IServiceRequestDocument>(
   {
-    request_id: { type: String, sparse: true, index: true },
+    request_id: { type: String, sparse: true },
     customerId: { type: Schema.Types.ObjectId, ref: "User" },
     userName: { type: String },
     userPhone: { type: String },
