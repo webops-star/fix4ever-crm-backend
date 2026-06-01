@@ -17,6 +17,14 @@ import { audit } from "../../shared/middleware/audit.middleware";
 
 type VendorParams = { Params: { vendorId: string } };
 
+export async function vendorStatsController(
+  _req: FastifyRequest,
+  reply: FastifyReply,
+) {
+  const result = await listVendors({ page: 1, limit: 1 });
+  return reply.send(successResponse({ total: result.total }, "Vendor stats fetched"));
+}
+
 const vendorFilterSchema = z.object({
   onboardingStatus: z.string().optional(),
   serviceAreas: z.string().optional(),
