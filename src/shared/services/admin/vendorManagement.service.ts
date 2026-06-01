@@ -13,6 +13,8 @@
  */
 import mongoose from "mongoose";
 import { ApiError } from "../../errors/ApiError";
+import { TechnicianWalletModel } from "../../models/vendor/technicianWallet.model";
+import { Review } from "../../models/review/review.model";
 
 function Vendor() {
   return mongoose.model("Vendor");
@@ -70,10 +72,7 @@ export async function getVendorDetail(vendorId: string) {
 
   const [vendor, wallet, activeRequests] = await Promise.all([
     Vendor().findById(vendorId).lean(),
-    mongoose
-      .model("TechnicianWallet")
-      .findOne({ technicianId: vendorId })
-      .lean(),
+    TechnicianWalletModel.findOne({ technicianId: vendorId }).lean(),
     SR().countDocuments({
       assignedVendor: vendorId,
       status: { $nin: ["Completed", "Cancelled"] },
@@ -159,11 +158,9 @@ export async function getVendorPerformance(vendorId: string) {
         .lean(),
       SR().countDocuments({ assignedVendor: vendorId, status: "Completed" }),
       SR().countDocuments({ assignedVendor: vendorId, status: "Cancelled" }),
-      mongoose.model("Review").aggregate([
+      Review.aggregate([
         { $match: { vendorId: new mongoose.Types.ObjectId(vendorId) } },
-        {
-          $group: { _id: null, avg: { $avg: "$rating" }, total: { $sum: 1 } },
-        },
+        { $group: { _id: null, avg: { $avg: "$rating" }, total: { $sum: 1 } } },
       ]),
     ],
   );
@@ -176,6 +173,17 @@ export async function getVendorPerformance(vendorId: string) {
     totalReviews: avgRating[0]?.total ?? 0,
     vendorLevel: (vendor as Record<string, unknown>)?.Level,
   };
+}
+
+export async function getVendorStats() {
+  const [total, pending, inReview, approved, rejected] = await Promise.all([
+    Vendor().countDocuments({}),
+    Vendor().countDocuments({ onboardingStatus: "In Progress" }),
+    Vendor().countDocuments({ onboardingStatus: "In Review" }),
+    Vendor().countDocuments({ onboardingStatus: "Approved" }),
+    Vendor().countDocuments({ onboardingStatus: "Rejected" }),
+  ]);
+  return { total, pending, inReview, approved, rejected };
 }
 
 export async function requestVendorClarification(

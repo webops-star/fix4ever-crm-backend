@@ -28,6 +28,7 @@ import { regionalRoutes } from "./modules/routes/regional.routes";
 import { editorRoutes } from "./modules/routes/editor.routes";
 import { supportChatRoutes } from "./modules/routes/supportChat.routes";
 import { captainRoutes } from "./modules/routes/adminCaptain.routes";
+import { vendorRoutes } from "./modules/routes/adminVendor.routes";
 import { handleSupportNotify } from "./modules/controllers/supportChat.controller";
 import { env } from "./config/env.config";
 
@@ -51,6 +52,9 @@ export async function apiRoutes(app: FastifyInstance) {
 
   // ── Captains — permission-gated, any role with captains.* grants ───────────
   await app.register(captainRoutes, { prefix: "/captains" });
+
+  // ── Vendors — permission-gated, any role with vendors.* grants ────────────
+  await app.register(vendorRoutes, { prefix: "/vendors" });
 
   // ── Internal bridge (main-app → CRM) ──────────────────────────────────────
   // Called by main-app backend to push real-time socket events to CRM agents.

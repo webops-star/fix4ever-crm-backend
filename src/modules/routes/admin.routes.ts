@@ -29,6 +29,7 @@ import {
 } from "../controllers/adminCustomer.controller";
 
 import {
+  vendorStatsController,
   listVendorsController,
   getVendorController,
   approveVendorController,

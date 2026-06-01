@@ -8,6 +8,7 @@ import { crmRoutes } from "../../modules/routes/crm.routes";
 import { regionalRoutes } from "../../modules/routes/regional.routes";
 import { editorRoutes } from "../../modules/routes/editor.routes";
 import { captainRoutes } from "../../modules/routes/adminCaptain.routes";
+import { vendorRoutes } from "../../modules/routes/adminVendor.routes";
 
 export async function apiV1Routes(app: FastifyInstance) {
   // Auth (public)
@@ -28,4 +29,7 @@ export async function apiV1Routes(app: FastifyInstance) {
 
   // Captains — permission-gated, accessible by any role with captains.* grants
   await app.register(captainRoutes, { prefix: "/captains" });
+
+  // Vendors — permission-gated, accessible by any role with vendors.* grants
+  await app.register(vendorRoutes, { prefix: "/vendors" });
 }
